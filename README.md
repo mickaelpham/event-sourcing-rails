@@ -1,24 +1,15 @@
-# README
+# Stats
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Practice implementation of
+[event sourcing](https://martinfowler.com/eaaDev/EventSourcing.html).
 
-Things you may want to cover:
+## Counter
 
-* Ruby version
+| command | description                                |
+| ------- | ------------------------------------------ |
+| `incr`  | increment the number by `n` (default: `1`) |
+| `decr`  | decrement the number by `n` (default: `1`) |
+| `reset` | reset the counter to `0`                   |
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+There are no `counters` database tables. Instead, there is a `counter_events`
+table which store the events for a given `model_id` (= counter ID).
