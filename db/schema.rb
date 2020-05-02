@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,15 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_200_502_172_215) do
-  # These are extensions that must be enabled in order to support this database
-  enable_extension 'plpgsql'
+ActiveRecord::Schema.define(version: 2020_05_02_190435) do
 
-  create_table 'subscription_events', force: :cascade do |t|
-    t.integer 'model_id', null: false
-    t.string 'name', null: false
-    t.json 'data', null: false
-    t.datetime 'created_at', default: -> { 'CURRENT_TIMESTAMP' }
-    t.index ['model_id'], name: 'index_subscription_events_on_model_id'
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "counter_events", force: :cascade do |t|
+    t.integer "model_id", null: false
+    t.string "name", null: false
+    t.json "data", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.index ["model_id"], name: "index_counter_events_on_model_id"
   end
+
+  create_table "subscription_events", force: :cascade do |t|
+    t.integer "model_id", null: false
+    t.string "name", null: false
+    t.json "data", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.index ["model_id"], name: "index_subscription_events_on_model_id"
+  end
+
 end
