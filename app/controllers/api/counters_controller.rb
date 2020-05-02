@@ -1,30 +1,35 @@
-class API::CountersController < ApplicationController
-  def show
-    render plain: counter.count.to_s
-  end
+# frozen_string_literal: true
 
-  def update
-    cmd = params.fetch('cmd')
-    by  = params['by']
-
-    case cmd
-    when 'incr' then by ? counter.incr(by) : counter.incr
-    when 'decr' then by ? counter.decr(by) : counter.decr
-    else
-      render :unprocessable_entity, "I don't know this command: #{cmd}"
+module API
+  class CountersController < ApplicationController
+    def show
+      render plain: counter.count.to_s
     end
 
-    render plain: counter.count.to_s
-  end
+    def update
+      by = params['by']
 
-  def destroy
-    counter.reset
-    render plain: counter.count.to_s
-  end
+      case params.fetch('cmd')
+      when 'incr' then counter.incr(by)
+      when 'decr' then counter.decr(by)
+      else
+        render status: :unprocessable_entity,
+               plain: "I don't know this command: #{cmd}"
+        return
+      end
 
-  private
+      render plain: counter.count.to_s
+    end
 
-  def counter
-    @counter ||= Counter.find(params['id'])
+    def destroy
+      counter.reset
+      render plain: counter.count.to_s
+    end
+
+    private
+
+    def counter
+      @counter ||= Counter.find(params['id'])
+    end
   end
 end

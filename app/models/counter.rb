@@ -19,10 +19,12 @@ class Counter
   end
 
   def incr(num = 1)
+    num ||= 1
     exec('increment', num)
   end
 
   def decr(num = 1)
+    num ||= 1
     exec('decrement', num)
   end
 
