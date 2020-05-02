@@ -50,10 +50,14 @@ class Counter
   end
 
   def handle_increment(num)
+    raise unless num.is_a? Integer
+
     { 'name' => 'Incremented', 'data' => { 'by' => num } }
   end
 
   def handle_decrement(num)
+    raise unless num.is_a? Integer
+
     { 'name' => 'Decremented', 'data' => { 'by' => num } }
   end
 
