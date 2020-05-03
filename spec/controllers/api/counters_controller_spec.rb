@@ -37,4 +37,34 @@ RSpec.describe API::CountersController do
       expect(response.body).to eq('0')
     end
   end
+
+  describe 'update' do
+    context 'with incr cmd' do
+      it 'returns the incremented value' do
+        put(:update, params: { id: counter_id, cmd: 'incr', by: 3 })
+
+        expect(response.body).to eq('3')
+      end
+    end
+
+    context 'with decr cmd' do
+      it 'returns the decremented value' do
+        put(:update, params: { id: counter_id, cmd: 'decr', by: 3 })
+
+        expect(response.body).to eq('-3')
+      end
+    end
+
+    context 'with an invalid cmd' do
+      before { put(:update, params: { id: counter_id, cmd: 'invalid-cmd' }) }
+
+      it 'returns 422' do
+        expect(response.status).to eq(422) # unprocessable entity
+      end
+
+      it 'returns the invalid cmd' do
+        expect(response.body).to eq("I don't know this command: invalid-cmd")
+      end
+    end
+  end
 end
