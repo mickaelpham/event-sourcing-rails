@@ -3,6 +3,9 @@
 class Account
   attr_reader :id, :balance
 
+  class BalanceLessThanWithdrawalAmount < StandardError; end
+  class NegativeAmountDeposit < StandardError; end
+
   class << self
     def find(id)
       account = new(id)
@@ -39,13 +42,17 @@ class Account
   end
 
   def handle_withdraw(amount)
-    raise unless amount.is_a?(Integer) && amount <= balance
+    unless amount.is_a?(Integer) && amount <= balance
+      raise BalanceLessThanWithdrawalAmount
+    end
 
     { 'name' => 'Withdrew', 'data' => { 'amount' => amount } }
   end
 
   def handle_deposit(amount)
-    raise unless amount.is_a?(Integer) && amount.positive?
+    unless amount.is_a?(Integer) && amount.positive?
+      raise Account::NegativeAmountDeposit
+    end
 
     { 'name' => 'Deposited', 'data' => { 'amount' => amount } }
   end
