@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_02_190435) do
+ActiveRecord::Schema.define(version: 2020_05_03_222354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "account_events", force: :cascade do |t|
+    t.integer "model_id", null: false
+    t.string "name", null: false
+    t.json "data", null: false
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }
+    t.index ["model_id"], name: "index_account_events_on_model_id"
+  end
 
   create_table "counter_events", force: :cascade do |t|
     t.integer "model_id", null: false
