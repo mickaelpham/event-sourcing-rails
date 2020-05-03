@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe API::CountersController do
   let(:counter_id) { 1 }
 
-  describe '#show' do
+  describe 'show' do
     context 'when then counter has no events' do
       it 'returns a counter initialized to 0' do
         get(:show, params: { id: counter_id })
@@ -25,6 +25,16 @@ RSpec.describe API::CountersController do
 
         expect(response.body).to eq('2')
       end
+    end
+  end
+
+  describe 'reset' do
+    before { Counter.find(counter_id).incr(5) }
+
+    it 'resets the counter to 0' do
+      delete(:destroy, params: { id: counter_id })
+
+      expect(response.body).to eq('0')
     end
   end
 end
