@@ -1,17 +1,60 @@
 # frozen_string_literal: true
 
 class Account
-  attr_reader :balance
+  attr_reader :id, :balance
 
-  def initialize
+  class << self
+    def find(id)
+      account = new(id)
+
+      AccountEvent.where(model_id: id)
+                  .find_each { |event| account.apply(event) }
+
+      account
+    end
+  end
+
+  def initialize(id)
+    @id = id
     @balance = 0
   end
 
   def withdraw(amount)
-    @balance -= amount
+    exec(:withdraw, amount)
   end
 
   def deposit(amount)
-    @balance += amount
+    exec(:deposit, amount)
+  end
+
+  def exec(cmd, data)
+    event = send("handle_#{cmd}", data).merge('model_id' => id)
+    AccountEvent.create(event)
+    apply(event)
+    self
+  end
+
+  def apply(event)
+    send("apply_#{event['name'].underscore}", event['data'])
+  end
+
+  def handle_withdraw(amount)
+    raise unless amount.is_a?(Integer) && amount <= balance
+
+    { 'name' => 'Withdrew', 'data' => { 'amount' => amount } }
+  end
+
+  def handle_deposit(amount)
+    raise unless amount.is_a?(Integer) && amount.positive?
+
+    { 'name' => 'Deposited', 'data' => { 'amount' => amount } }
+  end
+
+  def apply_withdrew(data)
+    @balance -= data.fetch('amount')
+  end
+
+  def apply_deposited(data)
+    @balance += data.fetch('amount')
   end
 end
