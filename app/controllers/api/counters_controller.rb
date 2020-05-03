@@ -9,7 +9,7 @@ module API
     def update
       by = params['by']
 
-      case params.fetch('cmd')
+      case (cmd = params.fetch('cmd'))
       when 'incr' then counter.incr(by)
       when 'decr' then counter.decr(by)
       else

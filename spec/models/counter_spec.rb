@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Counter, type: :model do
+RSpec.describe Counter do
   let(:counter) { described_class.find(1) }
 
   describe 'initialization' do

@@ -19,12 +19,22 @@ class Counter
   end
 
   def incr(num = 1)
+    # When `nil` is passed as a parameter, we default to 1
     num ||= 1
+
+    # Then we convert whatever `num` value to an integer
+    num = num.to_i
+
     exec('increment', num)
   end
 
   def decr(num = 1)
+    # When `nil` is passed as a parameter, we default to 1
     num ||= 1
+
+    # Then we convert whatever `num` value to an integer
+    num = num.to_i
+
     exec('decrement', num)
   end
 
