@@ -1,0 +1,106 @@
+openapi: 3.0.3
+
+info:
+  title: Stats API
+  description:
+    Practicing with [Event
+    Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/counters/{counterId}:
+    get:
+      summary: Returns a counter value
+      tags:
+        - counter
+      description:
+        Returns the current counter value, or 0 if the counter just got
+        initialized
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          description: The ID of the counter to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The current value of the counter
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 5
+    put:
+      summary: Updates a counter value
+      tags:
+        - counter
+      description:
+        Execute the given command against a counter to update its value
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          description: The ID of the counter to update
+          schema:
+            type: integer
+      requestBody:
+        description:
+          Countains the command to execute, and an optional by attribute
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CounterCommand"
+      responses:
+        "200":
+          description: Counter was updated successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 6
+        "422":
+          description: Counter could not be updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "I don't know this command: invalid-command-name"
+    delete:
+      summary: Resets a counter value
+      tags:
+        - counter
+      description: Reset a given counter value to 0
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          description: The ID of the counter to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Returns counter reset value (0)
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 0
+
+components:
+  schemas:
+    CounterCommand:
+      type: object
+      properties:
+        cmd:
+          type: string
+          required: true
+          enum: [incr, decr]
+        by:
+          type: integer
+          example: 2

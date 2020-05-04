@@ -13,6 +13,13 @@ Practice implementation of [event sourcing][event-sourcing].
 There are no `counters` database tables. Instead, there is a `counter_events`
 table which store the events for a given `model_id` (= counter ID).
 
+## Account
+
+| command    | description                                         |
+| ---------- | --------------------------------------------------- |
+| `withdraw` | Withdraw money from account (if sufficient balance) |
+| `deposit`  | Deposit a **positive** amount to an account         |
+
 [event-sourcing]: https://martinfowler.com/eaaDev/EventSourcing.html
 [circleci-shield]:
   https://circleci.com/gh/mickaelpham/stats/tree/master.svg?style=svg
