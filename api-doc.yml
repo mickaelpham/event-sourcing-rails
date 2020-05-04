@@ -1,0 +1,255 @@
+openapi: 3.0.3
+
+info:
+  title: Stats API
+  description:
+    Practicing with [Event
+    Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/accounts/{accountId}:
+    get:
+      summary: Returns an account balance
+      tags:
+        - account
+      description:
+        Returns the given account balance, and 0 if the account has no
+        transactions
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The ID of the account to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The account current balance
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Account"
+
+  /api/accounts/{accountId}/transactions:
+    get:
+      summary: Returns an account transactions
+      tags:
+        - account
+      description: Returns the given account past transactions
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The ID of the account to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The account transactions
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+    post:
+      summary: Create a new transaction
+      tags:
+        - account
+      description: Create a new transaction for the account
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The ID of the account for the transaction
+          schema:
+            type: integer
+      requestBody:
+        description: Contains the transaction to create
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: transaction
+                    attributes:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [deposit, withdrawal]
+                        amount:
+                          type: integer
+                          example: 10
+      responses:
+        "201":
+          description: Successfully created transaction
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Transaction"
+        "422":
+          description: Error while creating the subscription
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/counters/{counterId}:
+    get:
+      summary: Returns a counter value
+      tags:
+        - counter
+      description:
+        Returns the current counter value, or 0 if the counter just got
+        initialized
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          description: The ID of the counter to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The current value of the counter
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 5
+    put:
+      summary: Updates a counter value
+      tags:
+        - counter
+      description:
+        Execute the given command against a counter to update its value
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          description: The ID of the counter to update
+          schema:
+            type: integer
+      requestBody:
+        description:
+          Countains the command to execute, and an optional by attribute
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CounterCommand"
+      responses:
+        "200":
+          description: Counter was updated successfully
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 6
+        "422":
+          description: Counter could not be updated
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "I don't know this command: invalid-command-name"
+    delete:
+      summary: Resets a counter value
+      tags:
+        - counter
+      description: Reset a given counter value to 0
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          description: The ID of the counter to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Returns counter reset value (0)
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 0
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        type:
+          type: string
+          example: account
+        attributes:
+          type: object
+          properties:
+            balance:
+              type: integer
+              example: 100
+    CounterCommand:
+      type: object
+      properties:
+        cmd:
+          type: string
+          enum:
+            - incr
+            - decr
+        by:
+          type: integer
+          example: 2
+      required:
+        - cmd
+    Error:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Insufficient Balance"
+        detail:
+          type: string
+          example: "Cannot withdraw ${X} for account"
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        type:
+          type: string
+          example: transaction
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [deposit, withdrawal]
+            amount:
+              type: integer
+              example: 10
