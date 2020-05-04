@@ -12,6 +12,109 @@ servers:
     description: Local development server
 
 paths:
+  /api/accounts/{accountId}:
+    get:
+      summary: Returns an account balance
+      tags:
+        - account
+      description:
+        Returns the given account balance, and 0 if the account has no
+        transactions
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The ID of the account to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The account current balance
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Account"
+
+  /api/accounts/{accountId}/transactions:
+    get:
+      summary: Returns an account transactions
+      tags:
+        - account
+      description: Returns the given account past transactions
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The ID of the account to return
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The account transactions
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+    post:
+      summary: Create a new transaction
+      tags:
+        - account
+      description: Create a new transaction for the account
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: The ID of the account for the transaction
+          schema:
+            type: integer
+      requestBody:
+        description: Contains the transaction to create
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      example: transaction
+                    attributes:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [deposit, withdrawal]
+                        amount:
+                          type: integer
+                          example: 10
+      responses:
+        "201":
+          description: Successfully created transaction
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Transaction"
+        "422":
+          description: Error while creating the subscription
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /api/counters/{counterId}:
     get:
       summary: Returns a counter value
@@ -94,13 +197,59 @@ paths:
 
 components:
   schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        type:
+          type: string
+          example: account
+        attributes:
+          type: object
+          properties:
+            balance:
+              type: integer
+              example: 100
     CounterCommand:
       type: object
       properties:
         cmd:
           type: string
-          required: true
-          enum: [incr, decr]
+          enum:
+            - incr
+            - decr
         by:
           type: integer
           example: 2
+      required:
+        - cmd
+    Error:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Insufficient Balance"
+        detail:
+          type: string
+          example: "Cannot withdraw ${X} for account"
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        type:
+          type: string
+          example: transaction
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              enum: [deposit, withdrawal]
+            amount:
+              type: integer
+              example: 10
