@@ -22,6 +22,10 @@ class Account
     @balance = 0
   end
 
+  def transactions
+    AccountEvent.where(model_id: id)
+  end
+
   def withdraw(amount)
     exec(:withdraw, amount)
   end
