@@ -2,7 +2,20 @@
 
 Practice implementation of [event sourcing][event-sourcing].
 
-## Counter
+## Usage
+
+```
+git clone https://github.com/mickaelpham/stats
+cd stats
+bin/setup
+bin/rails server
+```
+
+Then check out the [API documentation](docs/README.md).
+
+## Commands
+
+### Counter
 
 | command | description                                |
 | ------- | ------------------------------------------ |
@@ -13,7 +26,7 @@ Practice implementation of [event sourcing][event-sourcing].
 There are no `counters` database tables. Instead, there is a `counter_events`
 table which store the events for a given `model_id` (= counter ID).
 
-## Account
+### Account
 
 | command    | description                                         |
 | ---------- | --------------------------------------------------- |
