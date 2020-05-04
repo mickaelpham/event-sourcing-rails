@@ -7,7 +7,7 @@ module API
     attribute :type do |object|
       case object.name
       when 'Deposited' then 'deposit'
-      when 'Withdrew' then 'withdrawal'
+      when 'Withdrew'  then 'withdrawal'
       end
     end
 
