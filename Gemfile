@@ -32,4 +32,6 @@ group :development do
   # background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  # Replace the default rails console to use Pry
+  gem 'pry-rails'
 end
